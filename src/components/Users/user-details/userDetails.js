@@ -1,17 +1,39 @@
-import React, { Fragment, useContext, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getOneUser } from "../../../actions/usersActions";
 import { getById } from "../../../services/users.service";
 import { useHistory } from "react-router-dom";
 
+const UserList = (props) => {
+  const user = props.user;
+  return (
+    <ul className="list-group mb-3">
+      <li>
+        <span class="badge badge-light"> N°: {user.id}</span>
+      </li>
+      <li>
+        <i className="fa fa-user"></i> {user.username}
+      </li>
+      <li>
+        <a href={`tel:${user.phone}`}>
+          <i className="fa fa-phone"></i> {user.phone}
+        </a>
+      </li>
+      <li>
+        <a href={`mailto:${user.email}`}>
+          <i className="fa fa-envelope"></i> {user.email}
+        </a>
+      </li>
+      <li>
+        <span class="badge badge-primary">{user.website}</span>
+      </li>
+    </ul>
+  );
+};
+
 const UserDetail = () => {
-  const [data, setData] = useState([{}]);
-  const [userId, setId] = useState(0);
+  const [user, setUser] = useState({});
   const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [website, setWebsite] = useState("");
   const [comanyName, setComanyName] = useState("");
   const [comanyBs, setComanyBs] = useState("");
   const [comanyCatchPhrase, setComanyCatchPhrase] = useState("");
@@ -19,31 +41,18 @@ const UserDetail = () => {
   const [addressStreet, setAddressStreet] = useState("");
   const [addressSuite, setAddressSuite] = useState("");
   const [addressZipcode, setAddressZipcode] = useState("");
-
-  /*const [billed_hours, setBilledHours] = useState(0);
-  const [billed_at, setBilledAt] = useState("");
-  const [billing_currency, setBillingCurrency] = useState("");
-  const [billed_amount, setBilledAmount] = useState(0);
-  const [needs_exchange, setNeedsExchange] = useState(false);
-  const [exchange_currency, setExchangeCurrency] = useState("");
-  const [description, setDescription] = useState("");*/
-  let user;
   const history = useHistory();
   const { id } = useParams();
 
   const peticionGet = async () => {
-    user = await getById(id);
+    let user = await getById(id);
+    setUser(user);
     if (user.error) {
       alert("Hubo un problema o no se encuentra el registro");
       history.push(`/users`);
     }
     console.log(user);
-    setId(user.id);
     setName(user.name);
-    setUsername(user.username);
-    setPhone(user.phone);
-    setEmail(user.email);
-    setWebsite(user.website);
     setComanyName(user.company.name);
     setComanyBs(user.company.bs);
     setComanyCatchPhrase(user.company.catchPhrase);
@@ -64,31 +73,13 @@ const UserDetail = () => {
           <div className="card-header">
             <div className="card-title">
               <h3>
-                <span class="badge badge-dark">{name}</span>
+                <span className="badge badge-dark">{name}</span>
               </h3>
             </div>
           </div>
           <div className="card-body">
+            <UserList user={user} />
             <ul className="list-group mb-3">
-              <li>
-                <span class="badge badge-light"> N°: {userId}</span>
-              </li>
-              <li>
-                <i className="fa fa-user"></i> {username}
-              </li>
-              <li>
-                <a href={`tel:${phone}`}>
-                  <i className="fa fa-phone"></i> {phone}
-                </a>
-              </li>
-              <li>
-                <a href={`mailto:${email}`}>
-                  <i className="fa fa-envelope"></i> {email}
-                </a>
-              </li>
-              <li>
-                <span class="badge badge-primary">{website}</span>
-              </li>
               <li>
                 <small>Company:</small>
                 <ul>

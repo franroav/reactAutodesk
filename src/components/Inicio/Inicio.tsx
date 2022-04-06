@@ -1,11 +1,5 @@
-import React, { Fragment, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
-import { Card } from "@material-ui/core";
-import axios from "axios";
+import React, { Fragment } from "react";
 import "./Inicio.css";
-import { getAll } from "../../services/users.service";
-import { connect } from "react-redux";
-const baseUrl = `https://mindicador.cl/api`;
 
 function Inicio(): JSX.Element {
   return (

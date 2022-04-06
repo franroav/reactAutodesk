@@ -6,7 +6,7 @@ import {
   deleteOneUser,
 } from "../../actions/usersActions";
 import { decreaseButton, increaseButton } from "../../actions/buttonsActions";
-import React, { Fragment, useContext, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { create } from "../../services/users.service";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -17,83 +17,38 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 const MySwal = withReactContent(Swal);
 
-const Hola = (e) => {
-  console.log(e);
+let name;
+let phone;
+let email;
+let username;
+let specification;
+let type;
+let description;
+let validForm = false;
+const insertUsert = async () => {
+  if (validForm) {
+    const createuser = create({
+      name,
+      phone,
+      email,
+      username,
+      specification,
+      description,
+    });
+    if (createuser.error) {
+      validForm = false;
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "there was an error when trying to insert a new record",
+        footer: "Why do I have this issue? Please try some other time",
+      });
+    }
+    Swal.fire("user created succesfully");
+  }
 };
 
-const modalForm = async (e) => {
-  let name;
-  let phone;
-  let email;
-  let username;
-  let validForm = false;
-  const { value: formValues } = await Swal.fire({
-    title: "User Form",
-    html:
-      '<div class="card">' +
-      '<div class="card-header"><small>Create a new user!</small></div>' +
-      '<div class="card-body">' +
-      '<div class="form-group row">' +
-      '<label for="inputEmail3" class="col-sm-2 col-form-label"><i class="fa fa-envelope"></i></label>' +
-      '<div class="col-sm-10">' +
-      '<input id="swal-input3" type="email" class="swal2-input form-control form-control-lg" placeholder="Email...">' +
-      "</div>" +
-      "</div>" +
-      '<div class="form-group row">' +
-      '<label for="name" class="col-sm-2 col-form-label"><small>Name</small></label>' +
-      '<div class="col-sm-10">' +
-      '<input id="swal-input1" type="text" class="form-control form-control-lg" placeholder="Name..">' +
-      "</div>" +
-      "</div>" +
-      '<div class="form-group row">' +
-      '<label for="username" class="col-sm-2 col-form-label"><i class="fa fa-user"></i></label>' +
-      '<div class="col-sm-10">' +
-      '<input id="swal-input4" type="text" class="form-control form-control-lg" placeholder="Username..">' +
-      "</div>" +
-      "</div>" +
-      '<div class="form-group row">' +
-      '<label for="username" class="col-sm-2 col-form-label"><small><i class="fa fa-phone"></i></small></label>' +
-      '<div class="col-sm-10">' +
-      '<input id="swal-input2" type="text" class="form-control form-control-lg" placeholder="Phone..">' +
-      "</div>" +
-      "</div>" +
-      '<div class="form-group row">' +
-      "</div>" +
-      "</div>" +
-      "</div>",
-    focusConfirm: false,
-    preConfirm: async () => {
-      name =
-        document.getElementById("swal-input1").value === ""
-          ? null
-          : document.getElementById("swal-input1").value;
-      phone =
-        document.getElementById("swal-input2").value === ""
-          ? null
-          : document.getElementById("swal-input2").value;
-      email =
-        document.getElementById("swal-input3").value === ""
-          ? null
-          : document.getElementById("swal-input3").value;
-      username =
-        document.getElementById("swal-input4").value === ""
-          ? null
-          : document.getElementById("swal-input4").value;
-      const template = { name, phone, email, username };
-      const createuser = create(template);
-      if (createuser.error) {
-        validForm = false;
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "there was an error when trying to insert a new record",
-          footer: "Why do I have this issue? Please try some other time",
-        });
-      }
-    },
-  });
-  console.log(e);
-
+const validateFormValues = async () => {
   if (name === null || phone === null || email === null || username === null) {
     validForm = false;
     Swal.fire({
@@ -104,10 +59,133 @@ const modalForm = async (e) => {
   } else {
     validForm = true;
   }
+};
+const templateForm = async () => {
+  name =
+    document.getElementById("name").value === ""
+      ? null
+      : document.getElementById("name").value;
+  phone =
+    document.getElementById("phone").value === ""
+      ? null
+      : document.getElementById("phone").value;
+  email =
+    document.getElementById("email").value === ""
+      ? null
+      : document.getElementById("email").value;
+  username =
+    document.getElementById("username").value === ""
+      ? null
+      : document.getElementById("username").value;
+  specification =
+    document.getElementById("specification").value === ""
+      ? null
+      : document.getElementById("specification").value;
+  type =
+    document.getElementById("type").value === ""
+      ? null
+      : document.getElementById("type").value;
+  description =
+    document.getElementById("description").value === ""
+      ? null
+      : document.getElementById("description").value;
+};
 
-  if (validForm) {
-    Swal.fire("user created succesfully");
-  }
+const modalForm = async (e) => {
+  const { value: formValues } = await Swal.fire({
+    title: "User Form",
+    showCancelButton: true,
+    confirmButtonText: "Create",
+    confirmButtonColor: "#3C99DC",
+    html:
+      '<div class="card">' +
+      '<div class="card-header"><small>Create a new user!</small></div>' +
+      '<div class="card-body">' +
+      '<div class="form-group row">' +
+      '<label for="email" class="col-sm-2 col-form-label"><i class="fa fa-envelope"></i></label>' +
+      '<div class="col-sm-10">' +
+      '<input id="email" type="email" class="form-control form-control-lg" placeholder="Email..." required>' +
+      "</div>" +
+      "</div>" +
+      '<div class="form-group row">' +
+      '<label for="name" class="col-sm-2 col-form-label"><small><i class="fa fa-user"></i></small></label>' +
+      '<div class="col-sm-10">' +
+      '<input id="name" type="text" class="form-control form-control-lg" placeholder="Name.." required >' +
+      "</div>" +
+      "</div>" +
+      '<div class="form-group row">' +
+      '<label for="username" class="col-sm-2 col-form-label"><i class="fa fa-address-book-o"></i></label>' +
+      '<div class="col-sm-10">' +
+      '<input id="username" type="text" class="form-control form-control-lg" placeholder="Username.." required>' +
+      "</div>" +
+      "</div>" +
+      '<div class="form-group row">' +
+      '<label for="username" class="col-sm-2 col-form-label"><small><i class="fa fa-phone"></i></small></label>' +
+      '<div class="col-sm-10">' +
+      '<input id="phone" type="text" class="form-control form-control-lg" placeholder="Phone.." required>' +
+      "</div>" +
+      "</div>" +
+      '<div class="form-group row">' +
+      '<label for="specification" class="col-sm-2 col-form-label"><i class="fa fa-briefcase"></i></label>' +
+      '<div class="col-sm-10">' +
+      '<select id="specification" class="form-select form-select-sm form-control form-control-lg" required>' +
+      "<option selected>" +
+      "Select spec section" +
+      "</option>" +
+      '<option value="opcion 1" >' +
+      "opcion 1" +
+      "</option>" +
+      '<option value="opcion 2" >' +
+      "opcion 2" +
+      "</option>" +
+      '<option value="opcion 3" >' +
+      "opcion 3" +
+      "</option>" +
+      '<option value="opcion 4" >' +
+      "opcion 4" +
+      "</option>" +
+      "</select>" +
+      "</div>" +
+      "</div>" +
+      '<div class="form-group row">' +
+      '<label for="description" class="col-sm-2 col-form-label"><i class="fa fa-comment-o"></i></label>' +
+      '<div class="col-sm-10">' +
+      '<textarea id="description" type="text" class="form-control form-control-lg" placeholder="Description..">' +
+      "</textarea>" +
+      "</div>" +
+      "</div>" +
+      '<div class="form-group row">' +
+      '<label for="type" class="col-sm-2 col-form-label"><i class="fa fa-cogs"></i></label>' +
+      '<div class="col-sm-10">' +
+      '<select id="type" class="form-select form-select-sm form-control form-control-lg" required>' +
+      "<option selected>" +
+      "Select type" +
+      "</option>" +
+      '<option value="type 1" >' +
+      "type 1" +
+      "</option>" +
+      '<option value="type 2" >' +
+      "type 2" +
+      "</option>" +
+      '<option value="type 3" >' +
+      "type 3" +
+      "</option>" +
+      '<option value="type 4" >' +
+      "type 4" +
+      "</option>" +
+      "</select>" +
+      "</div>" +
+      "</div>" +
+      "</div>" +
+      "</div>" +
+      "</div>",
+    focusConfirm: false,
+    preConfirm: async () => {
+      const setFormValues = await templateForm();
+      const validateFields = await validateFormValues();
+      const createUser = await insertUsert();
+    },
+  });
 };
 
 const Users = ({
@@ -122,11 +200,7 @@ const Users = ({
   decreaseButton,
 }) => {
   const [searchInReducer, setSearchInReducer] = useState(false);
-  const [firstUser, setUser] = useState("");
-  const [count, setCounter] = useState(0);
-  const [UserList, UserBucket] = useState([]);
   const listOfUsers = [];
-  // const { indicador } = useParams();
 
   const columns = [
     { title: "ID", field: "id" },
@@ -210,8 +284,6 @@ const Users = ({
   if (searchInReducer) {
     const { users } = userReducer;
     const UsersCollection = users;
-
-    console.log({ UsersCollection });
     if (UsersCollection !== undefined && UsersCollection.length) {
       for (const [index, user] of users.entries()) {
         listOfUsers.push({
@@ -271,6 +343,10 @@ const Users = ({
                 filtering: true,
                 sorting: true,
                 exportButton: true,
+                fixedColumns: {
+                  left: 1,
+                  right: 0,
+                },
               }}
               localization={{
                 header: {
